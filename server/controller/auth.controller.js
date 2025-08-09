@@ -10,6 +10,9 @@ export const signup = async (req, res) => {
         }
 
         const user = await User.create({ email, password, name });
+
+        // authenticate
+        const { accessToken, refreshToken } = generateTokens(user._id)
         res.status(201).json({ user, message: "User created successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });
