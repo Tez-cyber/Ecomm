@@ -8,6 +8,9 @@ import { connectDB } from "./lib/db.js";
 dotenv.config()
 const app = express();
 
+// Middlewares
+app.use(express.json());
+
 // ======= routes
 app.use("/api/auth", authRoutes)
 
