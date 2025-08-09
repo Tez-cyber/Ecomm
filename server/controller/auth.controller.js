@@ -1,3 +1,4 @@
+import { generateTokens, setCookies, storeRefreshToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 
 export const signup = async (req, res) => {
@@ -12,8 +13,16 @@ export const signup = async (req, res) => {
         const user = await User.create({ email, password, name });
 
         // authenticate
-        const { accessToken, refreshToken } = generateTokens(user._id)
-        res.status(201).json({ user, message: "User created successfully" });
+        const { accessToken, refreshToken } = generateTokens(user._id);
+        await storeRefreshToken(user._id, refreshToken);
+        setCookies(res, accessToken, refreshToken);
+
+        res.status(201).json({ user: {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role
+        }, message: "User created successfully" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
